@@ -1,0 +1,35 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: traefik-ingress-template
+spec:
+  generators:
+    - clusters:
+        selector:
+          matchLabels:
+            oddbit.com/services: "true"
+            oddbit.com/ingress: "traefik"
+  template:
+    metadata:
+      name: "{{name}}-traefik-ingress"
+    spec:
+      project: default
+      source:
+        repoURL: https://github.com/larsks/k8s-traefik-ingress.git
+        targetRevision: HEAD
+        path: "overlay/common"
+      destination:
+        server: "{{server}}"
+        namespace: traefik-ingress
+      syncPolicy:
+        automated:
+          prune: true
+          selfHeal: true
+        syncOptions:
+          - CreateNamespace=true
+        retry:
+          limit: -1
+          backoff:
+            duration: 30s
+            factor: 2
+            maxDuration: 10m

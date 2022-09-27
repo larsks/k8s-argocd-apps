@@ -1,0 +1,35 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: cert-manager-template
+spec:
+  generators:
+    - clusters:
+        selector:
+          matchLabels:
+            oddbit.com/services: "true"
+            oddbit.com/ingress: "nginx"
+  template:
+    metadata:
+      name: "{{name}}-cert-manager"
+    spec:
+      project: default
+      source:
+        repoURL: https://github.com/larsks/k8s-cert-manager.git
+        targetRevision: HEAD
+        path: "overlay/common"
+      destination:
+        server: "{{server}}"
+        namespace: cert-manager
+      syncPolicy:
+        automated:
+          prune: true
+          selfHeal: true
+        syncOptions:
+          - CreateNamespace=true
+        retry:
+          limit: -1
+          backoff:
+            duration: 30s
+            factor: 2
+            maxDuration: 10m
