@@ -12,6 +12,8 @@ spec:
   template:
     metadata:
       name: "{{name}}-cert-manager"
+      labels:
+        oddbit.com/services: "true"
     spec:
       project: default
       source:
