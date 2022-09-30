@@ -11,7 +11,7 @@ spec:
     path: overlay/common
   destination:
     server: https://kubernetes.default.svc
-    namespace: step-ca
+    namespace: step-certificates
   syncPolicy:
     automated:
       selfHeal: true
